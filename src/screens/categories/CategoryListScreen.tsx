@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, FlatList, Pressable, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
@@ -13,16 +13,6 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 const CategoryListScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<CategoryStackParamList>>();
   const { categories, isLoading, error, deleteCategory, refresh } = useCategories();
-
-  const grouped = useMemo(
-    () => {
-      const expense = categories.filter((category) => category.type === 'expense');
-      const income = categories.filter((category) => category.type === 'income');
-      const both = categories.filter((category) => category.type === 'both');
-      return { expense, income, both };
-    },
-    [categories]
-  );
 
   const confirmDelete = (id: number, isDefault: boolean) => {
     if (isDefault) {
@@ -51,13 +41,13 @@ const CategoryListScreen = () => {
         <Text style={styles.categoryType}>{item.type === 'both' ? 'Expense & Income' : item.type}</Text>
       </View>
       <View style={styles.actions}> 
-        <TouchableOpacity onPress={() => navigation.navigate('AddCategory' as never, { categoryId: item.id } as never)}>
+        <Pressable onPress={() => navigation.navigate('AddCategory', { categoryId: item.id })}>
           <MaterialCommunityIcons name="pencil" size={20} color={Colors.primary} />
-        </TouchableOpacity>
+        </Pressable>
         {!item.isDefault && (
-          <TouchableOpacity onPress={() => confirmDelete(item.id, item.isDefault)} style={styles.deleteButton}>
+          <Pressable onPress={() => confirmDelete(item.id, item.isDefault)} style={styles.deleteButton}>
             <MaterialCommunityIcons name="trash-can-outline" size={20} color={Colors.error} />
-          </TouchableOpacity>
+          </Pressable>
         )}
       </View>
     </View>
@@ -67,7 +57,7 @@ const CategoryListScreen = () => {
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <Text style={styles.heading}>Manage Categories</Text>
-        <AppButton title="Add" onPress={() => navigation.navigate('AddCategory' as never)} size="sm" />
+        <AppButton title="Add" onPress={() => navigation.navigate('AddCategory')} size="sm" />
       </View>
 
       <Text style={styles.description}>Create custom categories and keep track of where your money goes.</Text>
@@ -77,7 +67,7 @@ const CategoryListScreen = () => {
           icon="shape-outline"
           title="No categories found"
           description="Add categories to sort income and expenses."
-          action={{ label: 'Add Category', onPress: () => navigation.navigate('AddCategory' as never) }}
+          action={{ label: 'Add Category', onPress: () => navigation.navigate('AddCategory') }}
         />
       ) : (
         <FlatList
@@ -108,7 +98,7 @@ const styles = StyleSheet.create({
   categoryInfo: { flex: 1 },
   categoryName: { fontSize: Typography.fontSize.md, fontWeight: Typography.fontWeight.semiBold, color: Colors.textPrimary },
   categoryType: { marginTop: 4, color: Colors.textSecondary, fontSize: Typography.fontSize.sm },
-  actions: { flexDirection: 'row', gap: Spacing.sm },
+  actions: { flexDirection: 'row' },
   deleteButton: { marginLeft: Spacing.sm },
   separator: { height: Spacing.sm },
   error: { color: Colors.error, marginTop: Spacing.base, textAlign: 'center' },

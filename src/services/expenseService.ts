@@ -1,5 +1,5 @@
 import { LocalDatabase } from './localDatabase';
-import type { Expense, CreateExpensePayload, PaginatedResponse } from '@constants/types';
+import type { Expense, CreateExpensePayload, PaginatedResponse, PaymentMethod } from '@constants/types';
 
 export interface ExpenseFilters {
   page?: number;
@@ -10,12 +10,12 @@ export interface ExpenseFilters {
   minAmount?: number;
   maxAmount?: number;
   search?: string;
-  paymentMethod?: string;
+  paymentMethod?: PaymentMethod;
 }
 
 class ExpenseService {
-  async getAll(userId: number, filters?: ExpenseFilters): Promise<PaginatedResponse<Expense>> {
-    return LocalDatabase.getExpensesForUser(userId, filters);
+  async getAll(userId: number, filters?: Omit<ExpenseFilters, 'paymentMethod'> & { paymentMethod?: string }): Promise<PaginatedResponse<Expense>> {
+    return LocalDatabase.getExpensesForUser(userId, filters as any);
   }
 
   async getById(id: number): Promise<Expense> {

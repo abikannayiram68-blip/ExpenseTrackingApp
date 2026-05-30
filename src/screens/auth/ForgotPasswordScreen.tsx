@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, Pressable, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 
@@ -58,9 +58,9 @@ const ForgotPasswordScreen = () => {
           style={styles.button}
         />
 
-        <TouchableOpacity onPress={() => navigation.navigate('Login' as never)}>
+        <Pressable onPress={() => navigation.navigate('Login' as never)}>
           <Text style={styles.link}>Back to login</Text>
-        </TouchableOpacity>
+        </Pressable>
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
       </ScrollView>

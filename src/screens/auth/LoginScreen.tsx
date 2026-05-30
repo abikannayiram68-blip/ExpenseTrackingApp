@@ -5,7 +5,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  TouchableOpacity,
+  Pressable,
   ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -69,9 +69,9 @@ const LoginScreen = () => {
           required
         />
 
-        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword' as never)}>
+        <Pressable onPress={() => navigation.navigate('ForgotPassword' as never)}>
           <Text style={styles.forgot}>Forgot password?</Text>
-        </TouchableOpacity>
+        </Pressable>
 
         <AppButton
           title="Login"
@@ -83,9 +83,9 @@ const LoginScreen = () => {
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>New here?</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Register' as never)}>
+          <Pressable onPress={() => navigation.navigate('Register' as never)}>
             <Text style={styles.link}>Create an account</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         {error ? <Text style={styles.error}>{error}</Text> : null}

@@ -1,8 +1,8 @@
 // src/services/authService.ts
-import * as SecureStore from 'expo-secure-store';
 import { APP_CONFIG } from '@constants/theme';
 import type { LoginPayload, RegisterPayload, User, AuthTokens } from '@constants/types';
 import { LocalDatabase } from './localDatabase';
+import secureStorage from './secureStorage';
 
 class AuthService {
   constructor() {
@@ -35,7 +35,7 @@ class AuthService {
 
   async getStoredUser(): Promise<User | null> {
     try {
-      const userData = await SecureStore.getItemAsync(APP_CONFIG.userKey);
+      const userData = await secureStorage.getItemAsync(APP_CONFIG.userKey);
       return userData ? JSON.parse(userData) : null;
     } catch {
       return null;
@@ -44,7 +44,7 @@ class AuthService {
 
   async getStoredToken(): Promise<string | null> {
     try {
-      return await SecureStore.getItemAsync(APP_CONFIG.tokenKey);
+      return await secureStorage.getItemAsync(APP_CONFIG.tokenKey);
     } catch {
       return null;
     }
@@ -72,18 +72,18 @@ class AuthService {
   }
 
   private async storeTokens(tokens: AuthTokens): Promise<void> {
-    await SecureStore.setItemAsync(APP_CONFIG.tokenKey, tokens.accessToken);
-    await SecureStore.setItemAsync('refresh_token', tokens.refreshToken);
+    await secureStorage.setItemAsync(APP_CONFIG.tokenKey, tokens.accessToken);
+    await secureStorage.setItemAsync('refresh_token', tokens.refreshToken);
   }
 
   private async storeUser(user: User): Promise<void> {
-    await SecureStore.setItemAsync(APP_CONFIG.userKey, JSON.stringify(user));
+    await secureStorage.setItemAsync(APP_CONFIG.userKey, JSON.stringify(user));
   }
 
   private async clearStorage(): Promise<void> {
-    await SecureStore.deleteItemAsync(APP_CONFIG.tokenKey);
-    await SecureStore.deleteItemAsync('refresh_token');
-    await SecureStore.deleteItemAsync(APP_CONFIG.userKey);
+    await secureStorage.deleteItemAsync(APP_CONFIG.tokenKey);
+    await secureStorage.deleteItemAsync('refresh_token');
+    await secureStorage.deleteItemAsync(APP_CONFIG.userKey);
   }
 }
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 
@@ -71,9 +71,9 @@ const AddIncomeScreen = () => {
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <View style={styles.headerRow}>
         <Text style={styles.heading}>{incomeId ? 'Edit Income' : 'Add Income'}</Text>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Pressable onPress={() => navigation.goBack()}>
           <Text style={styles.cancel}>Cancel</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       <AppInput label="Source" placeholder="Salary, Freelance, Bonus" value={source} onChangeText={setSource} required />

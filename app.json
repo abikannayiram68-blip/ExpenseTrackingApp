@@ -11,7 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#6C63FF"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.expensetracker.app"
@@ -43,8 +45,9 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "YOUR_EAS_PROJECT_ID"
+        "projectId": "cf606d41-188e-40ea-8160-34b066fbb34b"
       }
-    }
+    },
+    "owner": "abiramik"
   }
 }

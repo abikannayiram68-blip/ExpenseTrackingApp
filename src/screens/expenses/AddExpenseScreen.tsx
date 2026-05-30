@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Platform, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
@@ -10,7 +10,7 @@ import { useExpenses } from '@context/ExpenseContext';
 import { useCategories } from '@context/CategoryContext';
 import expenseService from '@services/expenseService';
 import { useAuth } from '@context/AuthContext';
-import { PAYMENT_METHODS, DEFAULT_CATEGORIES } from '@constants/index';
+import { PAYMENT_METHODS } from '@constants/index';
 import { validateAmount } from '@utils/index';
 import { Colors, Typography, Spacing, BorderRadius } from '@constants/theme';
 import type { ExpenseStackParamList } from '@constants/types';
@@ -106,9 +106,9 @@ const AddExpenseScreen = () => {
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <View style={styles.headerRow}>
         <Text style={styles.heading}>{title}</Text>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Pressable onPress={() => navigation.goBack()}>
           <Text style={styles.cancel}>Cancel</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       <AppInput label="Amount" placeholder="0.00" value={amount} onChangeText={setAmount} keyboardType="numeric" required leftIcon="currency-inr" />
@@ -119,14 +119,14 @@ const AddExpenseScreen = () => {
       </View>
       <View style={styles.categoryGrid}>
         {expenseCategories.map((category) => (
-          <TouchableOpacity
+          <Pressable
             key={category.id}
             style={[styles.categoryButton, selectedCategory === category.id && styles.categoryButtonActive]}
             onPress={() => setSelectedCategory(category.id)}
           >
             <MaterialCommunityIcons name={category.icon as any} size={20} color={selectedCategory === category.id ? '#fff' : category.color} />
             <Text style={[styles.categoryLabel, selectedCategory === category.id && styles.categoryLabelActive]}>{category.name}</Text>
-          </TouchableOpacity>
+          </Pressable>
         ))}
       </View>
 

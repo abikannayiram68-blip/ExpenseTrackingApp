@@ -1,13 +1,14 @@
 // src/components/common/AppButton.tsx
 import React from 'react';
 import {
-  TouchableOpacity,
+  Pressable,
   Text,
   ActivityIndicator,
   StyleSheet,
   ViewStyle,
   TextStyle,
   View,
+  StyleProp,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Typography, BorderRadius, Spacing, Shadows } from '@constants/theme';
@@ -19,8 +20,8 @@ interface AppButtonProps {
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   disabled?: boolean;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
   leftIcon?: React.ReactNode;
 }
 
@@ -45,10 +46,9 @@ const AppButton = ({
 
   if (variant === 'primary') {
     return (
-      <TouchableOpacity
+      <Pressable
         onPress={onPress}
         disabled={isDisabled}
-        activeOpacity={0.8}
         style={[styles.base, { opacity: isDisabled ? 0.6 : 1 }, style]}
       >
         <LinearGradient
@@ -68,7 +68,7 @@ const AppButton = ({
             </View>
           )}
         </LinearGradient>
-      </TouchableOpacity>
+      </Pressable>
     );
   }
 
@@ -87,10 +87,9 @@ const AppButton = ({
   }[variant];
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       disabled={isDisabled}
-      activeOpacity={0.7}
       style={[
         styles.base,
         variantStyle,
@@ -109,7 +108,7 @@ const AppButton = ({
           </Text>
         </View>
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

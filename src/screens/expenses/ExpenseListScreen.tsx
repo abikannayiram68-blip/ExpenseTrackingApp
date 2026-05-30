@@ -4,12 +4,14 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  TouchableOpacity,
+  Pressable,
   TextInput,
   ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { ExpenseStackParamList } from '@constants/types';
 
 import { useExpenses } from '@context/ExpenseContext';
 import { useCategories } from '@context/CategoryContext';
@@ -19,7 +21,7 @@ import { Colors, Typography, Spacing, BorderRadius } from '@constants/theme';
 import { formatCurrency, formatDate } from '@utils/index';
 
 const ExpenseListScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<ExpenseStackParamList>>();
   const { expenses, isLoading, error, refresh, setFilters, clearFilters } = useExpenses();
   const { categories } = useCategories();
   const [query, setQuery] = useState('');
@@ -35,26 +37,26 @@ const ExpenseListScreen = () => {
   );
 
   const renderItem = ({ item }: { item: any }) => (
-    <TouchableOpacity
+    <Pressable
       style={styles.card}
-      onPress={() => navigation.navigate('ExpenseDetail' as never, { expenseId: item.id } as never)}
+      onPress={() => navigation.navigate('ExpenseDetail', { expenseId: item.id })}
     >
       <View style={styles.leftIcon}>
-        <MaterialCommunityIcons name="cash-minus" size={22} color={Colors.white} />
+        <MaterialCommunityIcons name="cash-minus" size={22} color={Colors.textInverse} />
       </View>
       <View style={styles.body}>
         <Text style={styles.title}>{item.description || 'Expense'}</Text>
         <Text style={styles.subtitle}>{formatDate(item.date)}</Text>
       </View>
       <Text style={styles.amount}>{formatCurrency(item.amount, 'INR')}</Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <Text style={styles.heading}>Expenses</Text>
-        <AppButton title="Add" onPress={() => navigation.navigate('AddExpense' as never)} size="sm" />
+        <AppButton title="Add" onPress={() => navigation.navigate('AddExpense')} size="sm" />
       </View>
 
       <View style={styles.searchBar}>
@@ -69,7 +71,7 @@ const ExpenseListScreen = () => {
       </View>
 
       <View style={styles.categoryRow}>
-        <TouchableOpacity
+        <Pressable
           style={[styles.categoryChip, selectedCategory === null && styles.categoryChipActive]}
           onPress={() => {
             setSelectedCategory(null);
@@ -77,15 +79,15 @@ const ExpenseListScreen = () => {
           }}
         >
           <Text style={[styles.categoryChipText, selectedCategory === null && styles.categoryChipTextActive]}>All</Text>
-        </TouchableOpacity>
+        </Pressable>
         {filteredCategories.map((category) => (
-          <TouchableOpacity
+          <Pressable
             key={category.id}
             style={[styles.categoryChip, selectedCategory === category.id && styles.categoryChipActive]}
             onPress={() => setSelectedCategory(category.id)}
           >
             <Text style={[styles.categoryChipText, selectedCategory === category.id && styles.categoryChipTextActive]}>{category.name}</Text>
-          </TouchableOpacity>
+          </Pressable>
         ))}
       </View>
 
@@ -104,16 +106,16 @@ const ExpenseListScreen = () => {
         />
       ) : (
         <EmptyState
-          icon="receipt-alert"
+          icon="receipt"
           title="No expenses found"
           description="Track your spending to see it appear here."
-          action={{ label: 'Add Expense', onPress: () => navigation.navigate('AddExpense' as never) }}
+          action={{ label: 'Add Expense', onPress: () => navigation.navigate('AddExpense') }}
         />
       )}
 
       <AppButton
         title="Add Expense"
-        onPress={() => navigation.navigate('AddExpense' as never)}
+        onPress={() => navigation.navigate('AddExpense')}
         style={styles.fab}
       />
     </View>

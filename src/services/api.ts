@@ -1,8 +1,8 @@
 // src/services/api.ts
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
-import * as SecureStore from 'expo-secure-store';
 import { APP_CONFIG } from '@constants/theme';
 import { API_ENDPOINTS } from '@constants/index';
+import secureStorage from './secureStorage';
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
@@ -27,7 +27,7 @@ const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   async (config) => {
     try {
-      const token = await SecureStore.getItemAsync(APP_CONFIG.tokenKey);
+      const token = await secureStorage.getItemAsync(APP_CONFIG.tokenKey);
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -75,13 +75,13 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshToken = await SecureStore.getItemAsync('refresh_token');
+        const refreshToken = await secureStorage.getItemAsync('refresh_token');
         const response = await axios.post(`${BASE_URL}${API_ENDPOINTS.REFRESH_TOKEN}`, {
           refreshToken,
         });
 
         const { accessToken } = response.data.data;
-        await SecureStore.setItemAsync(APP_CONFIG.tokenKey, accessToken);
+        await secureStorage.setItemAsync(APP_CONFIG.tokenKey, accessToken);
 
         onTokenRefreshed(accessToken);
         isRefreshing = false;
@@ -93,8 +93,8 @@ apiClient.interceptors.response.use(
       } catch (refreshError) {
         isRefreshing = false;
         // Token refresh failed — clear storage and force logout
-        await SecureStore.deleteItemAsync(APP_CONFIG.tokenKey);
-        await SecureStore.deleteItemAsync('refresh_token');
+        await secureStorage.deleteItemAsync(APP_CONFIG.tokenKey);
+        await secureStorage.deleteItemAsync('refresh_token');
         // The AuthContext will pick this up on next render
         return Promise.reject(refreshError);
       }

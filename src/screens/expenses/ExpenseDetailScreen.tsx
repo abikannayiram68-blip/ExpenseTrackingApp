@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { ExpenseStackParamList } from '@constants/types';
 
 import expenseService from '@services/expenseService';
 import { useExpenses } from '@context/ExpenseContext';
 import { useAuth } from '@context/AuthContext';
 import { formatCurrency, formatDate } from '@utils/index';
 import { Colors, Typography, Spacing, BorderRadius } from '@constants/theme';
-import type { ExpenseStackParamList } from '@constants/types';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const ExpenseDetailScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<ExpenseStackParamList>>();
@@ -63,9 +63,9 @@ const ExpenseDetailScreen = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerRow}>
         <Text style={styles.heading}>Expense Details</Text>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Pressable onPress={() => navigation.goBack()}>
           <Text style={styles.cancel}>Close</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       <View style={styles.card}>
@@ -92,7 +92,7 @@ const ExpenseDetailScreen = () => {
       </View>
 
       <View style={styles.actionsRow}>
-        <AppButton title="Edit" onPress={() => navigation.navigate('AddExpense' as never, { expenseId } as never)} style={styles.actionButton} />
+        <AppButton title="Edit" onPress={() => navigation.navigate('AddExpense', { expenseId })} style={styles.actionButton} />
         <AppButton title="Delete" variant="outline" onPress={handleDelete} style={styles.actionButton} />
       </View>
     </ScrollView>
@@ -100,9 +100,9 @@ const ExpenseDetailScreen = () => {
 };
 
 const AppButton = ({ title, onPress, variant = 'primary', style }: any) => (
-  <TouchableOpacity onPress={onPress} style={[styles.actionCustomButton, variant === 'outline' && styles.outlineButton, style]}>
+  <Pressable onPress={onPress} style={[styles.actionCustomButton, variant === 'outline' && styles.outlineButton, style]}>
     <Text style={[styles.actionCustomText, variant === 'outline' && styles.outlineText]}>{title}</Text>
-  </TouchableOpacity>
+  </Pressable>
 );
 
 const styles = StyleSheet.create({

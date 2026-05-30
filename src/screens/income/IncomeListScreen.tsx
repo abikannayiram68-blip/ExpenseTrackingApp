@@ -5,11 +5,13 @@ import {
   StyleSheet,
   FlatList,
   TextInput,
-  TouchableOpacity,
+  Pressable,
   ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { IncomeStackParamList } from '@constants/types';
 
 import { useAuth } from '@context/AuthContext';
 import incomeService from '@services/incomeService';
@@ -19,7 +21,7 @@ import { Colors, Typography, Spacing, BorderRadius } from '@constants/theme';
 import { EmptyState } from '@components/cards/GradientHeader';
 
 const IncomeListScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<IncomeStackParamList>>();
   const { user } = useAuth();
   const [incomes, setIncomes] = useState<any[]>([]);
   const [query, setQuery] = useState('');
@@ -41,23 +43,23 @@ const IncomeListScreen = () => {
   }, [user, query]);
 
   const renderItem = ({ item }: { item: any }) => (
-    <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('AddIncome' as never, { incomeId: item.id } as never)}>
+    <Pressable style={styles.card} onPress={() => navigation.navigate('AddIncome', { incomeId: item.id })}>
       <View style={styles.leftIcon}>
-        <MaterialCommunityIcons name="cash-plus" size={22} color={Colors.white} />
+        <MaterialCommunityIcons name="cash-plus" size={22} color={Colors.textInverse} />
       </View>
       <View style={styles.body}>
         <Text style={styles.title}>{item.source}</Text>
         <Text style={styles.subtitle}>{formatDate(item.date)}</Text>
       </View>
       <Text style={styles.amount}>{formatCurrency(item.amount, user?.currency ?? 'INR')}</Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <Text style={styles.heading}>Income</Text>
-        <AppButton title="Add" onPress={() => navigation.navigate('AddIncome' as never)} size="sm" />
+        <AppButton title="Add" onPress={() => navigation.navigate('AddIncome')} size="sm" />
       </View>
 
       <View style={styles.searchBar}>
@@ -86,7 +88,7 @@ const IncomeListScreen = () => {
           icon="cash-plus"
           title="No income entries"
           description="Log your income to get a complete financial picture."
-          action={{ label: 'Add Income', onPress: () => navigation.navigate('AddIncome' as never) }}
+          action={{ label: 'Add Income', onPress: () => navigation.navigate('AddIncome') }}
         />
       )}
     </View>

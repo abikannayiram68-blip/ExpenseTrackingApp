@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 import { useAuth } from '@context/AuthContext';
@@ -85,13 +85,13 @@ const ProfileScreen = () => {
       <Text style={styles.sectionLabel}>Preferred Currency</Text>
       <View style={styles.currencyRow}>
         {CURRENCIES.map((option) => (
-          <TouchableOpacity
+          <Pressable
             key={option.value}
             style={[styles.currencyOption, currency === option.value && styles.currencyOptionActive]}
             onPress={() => setCurrency(option.value)}
           >
             <Text style={[styles.currencyText, currency === option.value && styles.currencyTextActive]}>{option.value}</Text>
-          </TouchableOpacity>
+          </Pressable>
         ))}
       </View>
 

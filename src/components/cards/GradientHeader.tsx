@@ -1,6 +1,6 @@
 // src/components/cards/GradientHeader.tsx
 import React, { ReactNode } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, Pressable, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -37,9 +37,9 @@ export const GradientHeader = ({
       <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
       <View style={styles.row}>
         {showBack && (
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+          <Pressable onPress={() => navigation.goBack()} style={styles.backBtn}>
             <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
-          </TouchableOpacity>
+          </Pressable>
         )}
         <View style={styles.titleBlock}>
           <Text style={styles.title}>{title}</Text>
@@ -123,9 +123,9 @@ export const EmptyState = ({ icon, title, description, action }: EmptyStateProps
     <Text style={emptyStyles.title}>{title}</Text>
     <Text style={emptyStyles.description}>{description}</Text>
     {action && (
-      <TouchableOpacity onPress={action.onPress} style={emptyStyles.action}>
+      <Pressable onPress={action.onPress} style={emptyStyles.action}>
         <Text style={emptyStyles.actionText}>{action.label}</Text>
-      </TouchableOpacity>
+      </Pressable>
     )}
   </View>
 );

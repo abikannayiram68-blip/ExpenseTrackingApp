@@ -4,10 +4,12 @@ import {
   View,
   TextInput,
   Text,
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   TextInputProps,
   ViewStyle,
+  TextStyle,
+  StyleProp,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors, Typography, BorderRadius, Spacing, Shadows } from '@constants/theme';
@@ -19,7 +21,7 @@ interface AppInputProps extends TextInputProps {
   leftIcon?: string;
   rightIcon?: string;
   onRightIconPress?: () => void;
-  containerStyle?: ViewStyle;
+  containerStyle?: StyleProp<ViewStyle>;
   required?: boolean;
 }
 
@@ -68,22 +70,26 @@ const AppInput = ({
           secureTextEntry={isSecure}
           onFocus={(e) => { setIsFocused(true); props.onFocus?.(e); }}
           onBlur={(e) => { setIsFocused(false); props.onBlur?.(e); }}
-          style={[styles.input, leftIcon && styles.inputWithLeft, (rightIcon || secureTextEntry) && styles.inputWithRight]}
+          style={[
+            styles.input,
+            leftIcon ? styles.inputWithLeft : null,
+            (rightIcon || secureTextEntry) ? styles.inputWithRight : null,
+          ]}
           placeholderTextColor={Colors.textTertiary}
         />
 
         {secureTextEntry ? (
-          <TouchableOpacity onPress={() => setIsSecure(!isSecure)} style={styles.rightIcon}>
+          <Pressable onPress={() => setIsSecure(!isSecure)} style={styles.rightIcon}>
             <MaterialCommunityIcons
               name={isSecure ? 'eye-off' : 'eye'}
               size={20}
               color={Colors.textTertiary}
             />
-          </TouchableOpacity>
+          </Pressable>
         ) : rightIcon ? (
-          <TouchableOpacity onPress={onRightIconPress} style={styles.rightIcon}>
+          <Pressable onPress={onRightIconPress} style={styles.rightIcon}>
             <MaterialCommunityIcons name={rightIcon as any} size={20} color={Colors.textTertiary} />
-          </TouchableOpacity>
+          </Pressable>
         ) : null}
       </View>
 

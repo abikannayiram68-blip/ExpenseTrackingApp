@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, FlatList } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions, FlatList, RefreshControl } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import analyticsService from '@services/analyticsService';
 import { useAuth } from '@context/AuthContext';
@@ -22,7 +22,7 @@ const DashboardScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const loadSummary = async () => {
+  const loadSummary = useCallback(async () => {
     if (!user) return;
     setIsLoading(true);
     setError(null);
@@ -38,11 +38,11 @@ const DashboardScreen = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  useEffect(() => {
-    void loadSummary();
   }, [user]);
+
+  useFocusEffect(useCallback(() => {
+    void loadSummary();
+  }, [loadSummary]));
 
   const renderTransaction = ({ item }: { item: any }) => (
     <View style={styles.transactionCard}>
@@ -72,7 +72,18 @@ const DashboardScreen = () => {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      refreshControl={
+        <RefreshControl
+          refreshing={isLoading}
+          onRefresh={loadSummary}
+          tintColor={Colors.primary}
+          colors={[Colors.primary]}
+        />
+      }
+    >
       <GradientHeader title="Dashboard" subtitle="Your financial snapshot" />
 
       <View style={styles.cardsRow}>
@@ -126,18 +137,18 @@ const DashboardScreen = () => {
       </View>
 
       <View style={styles.actionsRow}>
-        <TouchableOpacity style={styles.actionCard} onPress={() => navigation.navigate('Expenses' as never)}>
+        <Pressable style={styles.actionCard} onPress={() => navigation.navigate('Expenses' as never)}>
           <MaterialCommunityIcons name="receipt" size={24} color={Colors.primary} />
           <Text style={styles.actionLabel}>Expenses</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionCard} onPress={() => navigation.navigate('Income' as never)}>
+        </Pressable>
+        <Pressable style={styles.actionCard} onPress={() => navigation.navigate('Income' as never)}>
           <MaterialCommunityIcons name="cash-plus" size={24} color={Colors.income} />
           <Text style={styles.actionLabel}>Income</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionCard} onPress={() => navigation.navigate('Budget' as never)}>
+        </Pressable>
+        <Pressable style={styles.actionCard} onPress={() => navigation.navigate('Budget' as never)}>
           <MaterialCommunityIcons name="piggy-bank" size={24} color={Colors.budget} />
           <Text style={styles.actionLabel}>Budget</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </ScrollView>
   );

@@ -264,15 +264,15 @@ export const LocalDatabase = {
     let filtered = allExpenses;
 
     if (filters) {
+      const { startDate, endDate } = filters;
       if (filters.categoryId) filtered = filtered.filter((item) => item.categoryId === filters.categoryId);
       if (filters.paymentMethod) filtered = filtered.filter((item) => item.paymentMethod === filters.paymentMethod);
       if (filters.search) {
         const search = filters.search.toLowerCase();
         filtered = filtered.filter((item) => item.description.toLowerCase().includes(search) || item.notes?.toLowerCase().includes(search));
       }
-      if (filters.startDate) filtered = filtered.filter((item) => new Date(item.date) >= new Date(filters.startDate));
-      if (filters.endDate) filtered = filtered.filter((item) => new Date(item.date) <= new Date(filters.endDate));
-      if (filters.minAmount !== undefined) filtered = filtered.filter((item) => item.amount >= filters.minAmount!);
+      if (startDate) filtered = filtered.filter((item) => new Date(item.date) >= new Date(startDate));
+      if (endDate) filtered = filtered.filter((item) => new Date(item.date) <= new Date(endDate));
       if (filters.maxAmount !== undefined) filtered = filtered.filter((item) => item.amount <= filters.maxAmount!);
     }
 
@@ -323,12 +323,14 @@ export const LocalDatabase = {
     let filtered = allIncomes;
 
     if (filters) {
+      const startDate = filters.startDate ? new Date(filters.startDate) : undefined;
+      const endDate = filters.endDate ? new Date(filters.endDate) : undefined;
       if (filters.search) {
         const search = filters.search.toLowerCase();
         filtered = filtered.filter((item) => item.source.toLowerCase().includes(search) || item.notes?.toLowerCase().includes(search));
       }
-      if (filters.startDate) filtered = filtered.filter((item) => new Date(item.date) >= new Date(filters.startDate));
-      if (filters.endDate) filtered = filtered.filter((item) => new Date(item.date) <= new Date(filters.endDate));
+      if (startDate) filtered = filtered.filter((item) => new Date(item.date) >= startDate);
+      if (endDate) filtered = filtered.filter((item) => new Date(item.date) <= endDate);
     }
 
     return buildPagination(filtered, filters?.page ?? 1, filters?.limit ?? 20);
@@ -399,7 +401,12 @@ export const LocalDatabase = {
     const budgets = await getBudgets();
     const newBudget: Budget = {
       id: generateId(),
-      ...payload,
+      userId: payload.userId,
+      categoryId: payload.categoryId,
+      amount: payload.amount,
+      month: payload.month,
+      year: payload.year,
+      alertAt: payload.alertAt ?? 80,
       spent: 0,
       createdAt: new Date().toISOString(),
     };
@@ -509,7 +516,8 @@ export const LocalDatabase = {
     const counts: Record<string, number> = {};
 
     for (const item of filtered) {
-      const key = type === 'expense' ? String(item.categoryId ?? 0) : String(item.id);
+      const expenseItem = item as Expense;
+      const key = type === 'expense' ? String(expenseItem.categoryId ?? 0) : String(item.id);
       totals[key] = (totals[key] ?? 0) + item.amount;
       counts[key] = (counts[key] ?? 0) + 1;
     }

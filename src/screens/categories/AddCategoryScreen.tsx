@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 
 import AppInput from '@components/common/AppInput';
 import AppButton from '@components/common/AppButton';
 import { useCategories } from '@context/CategoryContext';
 import { Colors, Typography, Spacing, BorderRadius } from '@constants/theme';
-import { CATEGORY_TYPES } from '@constants/index';
 import type { CategoryStackParamList } from '@constants/types';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -65,9 +63,9 @@ const AddCategoryScreen = () => {
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <View style={styles.headerRow}>
         <Text style={styles.heading}>{categoryId ? 'Edit Category' : 'Add Category'}</Text>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Pressable onPress={() => navigation.goBack()}>
           <Text style={styles.cancel}>Cancel</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       <AppInput label="Name" placeholder="Category name" value={name} onChangeText={setName} required />
@@ -77,7 +75,7 @@ const AddCategoryScreen = () => {
       <Text style={styles.sectionLabel}>Type</Text>
       <View style={styles.typeRow}>
         {(['expense', 'income', 'both'] as const).map((option) => (
-          <TouchableOpacity
+          <Pressable
             key={option}
             style={[styles.typeOption, type === option && styles.typeOptionActive]}
             onPress={() => setType(option)}
@@ -85,7 +83,7 @@ const AddCategoryScreen = () => {
             <Text style={[styles.typeOptionText, type === option && styles.typeOptionTextActive]}>
               {option === 'both' ? 'Both' : option.charAt(0).toUpperCase() + option.slice(1)}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         ))}
       </View>
 

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { BudgetStackParamList } from '@constants/types';
 
 import { useAuth } from '@context/AuthContext';
 import budgetService from '@services/budgetService';
@@ -11,7 +13,7 @@ import { Colors, Typography, Spacing, BorderRadius } from '@constants/theme';
 import { EmptyState } from '@components/cards/GradientHeader';
 
 const BudgetListScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<BudgetStackParamList>>();
   const { user } = useAuth();
   const [budgets, setBudgets] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -33,9 +35,9 @@ const BudgetListScreen = () => {
   const renderItem = ({ item }: { item: any }) => {
     const progress = Math.min((item.spent / item.amount) * 100, 100);
     return (
-      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('AddBudget' as never, { budgetId: item.id } as never)}>
+      <Pressable style={styles.card} onPress={() => navigation.navigate('AddBudget', { budgetId: item.id })}>
         <View style={styles.cardHeader}>
-          <Text style={styles.title}>{item.name}</Text>
+          <Text style={styles.title}>{`Budget ${item.month}/${item.year}`}</Text>
           <Text style={styles.amount}>{formatCurrency(item.amount, user?.currency ?? 'INR')}</Text>
         </View>
         <View style={styles.metaRow}>
@@ -45,7 +47,7 @@ const BudgetListScreen = () => {
         <View style={styles.progressBarBackground}>
           <View style={[styles.progressBar, { width: `${progress}%` }]} />
         </View>
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 
@@ -53,7 +55,7 @@ const BudgetListScreen = () => {
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <Text style={styles.heading}>Budgets</Text>
-        <AppButton title="New" onPress={() => navigation.navigate('AddBudget' as never)} size="sm" />
+        <AppButton title="New" onPress={() => navigation.navigate('AddBudget')} size="sm" />
       </View>
 
       {loading ? (
@@ -72,7 +74,7 @@ const BudgetListScreen = () => {
           icon="briefcase-check"
           title="No budgets yet"
           description="Set spending limits to stay on top of your money."
-          action={{ label: 'Create budget', onPress: () => navigation.navigate('AddBudget' as never) }}
+          action={{ label: 'Create budget', onPress: () => navigation.navigate('AddBudget') }}
         />
       )}
     </View>
@@ -90,7 +92,7 @@ const styles = StyleSheet.create({
   amount: { fontSize: Typography.fontSize.md, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary },
   metaRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: Spacing.sm },
   label: { color: Colors.textSecondary },
-  progressBarBackground: { height: 8, borderRadius: BorderRadius.full, backgroundColor: Colors.surfaceSecondary, marginTop: Spacing.sm, overflow: 'hidden' },
+  progressBarBackground: { height: 8, borderRadius: BorderRadius.full, backgroundColor: Colors.surfaceVariant, marginTop: Spacing.sm, overflow: 'hidden' },
   progressBar: { height: '100%', backgroundColor: Colors.primary },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 });

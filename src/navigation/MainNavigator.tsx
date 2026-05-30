@@ -1,7 +1,7 @@
 // src/navigation/MainNavigator.tsx
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -45,10 +45,9 @@ const CustomTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
         const isFocused = state.index === index;
 
         return (
-          <TouchableOpacity
+          <Pressable
             key={route.key}
             style={styles.tabItem}
-            activeOpacity={0.7}
             onPress={() => {
               const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
               if (!isFocused && !event.defaultPrevented) {
@@ -65,7 +64,7 @@ const CustomTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
             <Text style={[styles.tabLabel, isFocused && styles.tabLabelActive]}>
               {tab.label}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         );
       })}
     </View>

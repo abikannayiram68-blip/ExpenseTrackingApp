@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 
@@ -16,9 +16,11 @@ const AddBudgetScreen = () => {
   const route = useRoute();
   const navigation = useNavigation<NativeStackNavigationProp<BudgetStackParamList>>();
   const { user } = useAuth();
-  const [name, setName] = useState('Monthly Budget');
+  const now = new Date();
   const [amount, setAmount] = useState('');
-  const [deadline, setDeadline] = useState(new Date().toISOString().slice(0, 10));
+  const [month, setMonth] = useState((now.getMonth() + 1).toString());
+  const [year, setYear] = useState(now.getFullYear().toString());
+  const [alertAt, setAlertAt] = useState('80');
   const [loading, setLoading] = useState(false);
 
   const budgetId = (route.params as any)?.budgetId as number | undefined;
@@ -29,9 +31,10 @@ const AddBudgetScreen = () => {
     budgetService
       .getById(budgetId)
       .then((item) => {
-        setName(item.name);
         setAmount(item.amount.toString());
-        setDeadline(item.deadline);
+        setMonth(item.month.toString());
+        setYear(item.year.toString());
+        setAlertAt(item.alertAt.toString());
       })
       .catch(() => Toast.show({ type: 'error', text1: 'Unable to load budget.' }))
       .finally(() => setLoading(false));
@@ -42,14 +45,21 @@ const AddBudgetScreen = () => {
       Toast.show({ type: 'error', text1: 'Login required.' });
       return;
     }
-    if (!name.trim() || !validateAmount(amount)) {
-      Toast.show({ type: 'error', text1: 'Please complete all fields.' });
+
+    if (!validateAmount(amount) || !month || !year || Number(month) < 1 || Number(month) > 12 || Number(year) < 2000) {
+      Toast.show({ type: 'error', text1: 'Please enter a valid amount, month, and year.' });
       return;
     }
 
     setLoading(true);
     try {
-      const payload = { name: name.trim(), amount: Number(amount), deadline };
+      const payload = {
+        amount: Number(amount),
+        month: Number(month),
+        year: Number(year),
+        alertAt: Number(alertAt) || 80,
+      };
+
       if (budgetId) {
         await budgetService.update(budgetId, payload);
         Toast.show({ type: 'success', text1: 'Budget updated.' });
@@ -69,14 +79,15 @@ const AddBudgetScreen = () => {
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <View style={styles.headerRow}>
         <Text style={styles.heading}>{budgetId ? 'Edit Budget' : 'Create Budget'}</Text>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Pressable onPress={() => navigation.goBack()}>
           <Text style={styles.cancel}>Cancel</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
-      <AppInput label="Budget Name" placeholder="e.g. Food, Shopping" value={name} onChangeText={setName} required />
       <AppInput label="Amount" placeholder="0.00" value={amount} onChangeText={setAmount} keyboardType="numeric" required />
-      <AppInput label="Deadline" placeholder="YYYY-MM-DD" value={deadline} onChangeText={setDeadline} required />
+      <AppInput label="Month" placeholder="1-12" value={month} onChangeText={setMonth} keyboardType="numeric" required />
+      <AppInput label="Year" placeholder="2025" value={year} onChangeText={setYear} keyboardType="numeric" required />
+      <AppInput label="Alert Threshold (%)" placeholder="80" value={alertAt} onChangeText={setAlertAt} keyboardType="numeric" required />
 
       <AppButton title={budgetId ? 'Update Budget' : 'Save Budget'} onPress={handleSubmit} loading={loading} style={styles.button} />
     </ScrollView>

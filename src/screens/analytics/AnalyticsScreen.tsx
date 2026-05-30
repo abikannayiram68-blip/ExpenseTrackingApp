@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Dimensions, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Dimensions, ActivityIndicator, Pressable } from 'react-native';
 import { LineChart, PieChart } from 'react-native-chart-kit';
 
 import { useAuth } from '@context/AuthContext';
@@ -140,13 +140,13 @@ const AnalyticsScreen = () => {
         <Text style={styles.sectionTitle}>Category Breakdown</Text>
         <View style={styles.toggleRow}>
           {(['expense', 'income'] as const).map((type) => (
-            <TouchableOpacity
+            <Pressable
               key={type}
               onPress={() => setActiveType(type)}
               style={[styles.toggleButton, activeType === type && styles.toggleButtonActive]}
             >
               <Text style={[styles.toggleText, activeType === type && styles.toggleTextActive]}>{type === 'expense' ? 'Expenses' : 'Income'}</Text>
-            </TouchableOpacity>
+            </Pressable>
           ))}
         </View>
       </View>
